@@ -1,0 +1,1 @@
+rm -rf /data/data/com.android.systemui*/*
