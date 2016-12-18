@@ -33,7 +33,7 @@
 
 # This will be the folder name under /magisk or /cache/magisk
 # This should also be the same as the id in your module.prop to prevent confusion
-MODID=template
+MODID=NavBarEnabler
 
 # Set to true if you need automount
 # Most mods would like it to be enabled
@@ -53,7 +53,8 @@ LATESTARTSERVICE=false
 
 print_modname() {
   ui_print "*******************************"
-  ui_print "     Magisk Module Template    "
+  ui_print "      NavBar Tuner Enabler"
+  ui_print "        by putridfoetus"
   ui_print "*******************************"
 }
 
@@ -75,6 +76,7 @@ REPLACE="
 
 # Construct your own list here
 REPLACE="
+/system/priv-app/SystemUI
 "
 
 ##########################################################################################

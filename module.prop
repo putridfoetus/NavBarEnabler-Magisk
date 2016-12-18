@@ -1,8 +1,8 @@
-id=template
-name=Template Module
+id=NavBarEnabler
+name=NavBarEnabler
 version=v1
 versionCode=1
-author=topjohnwu
-description=A short description
-support=http://forum.xda-developers.com/showthread.php?t=3432382
-donate=http://topjohnwu.github.io/donate
+author=osm0sis @ xda-developers, djb77, putridfoetus
+description=Magisk module to patch SystemUI.apk or SystemUIGoogle.apk in recovery to enable Navigation Bar tuner in systemUI Tuner settings
+support=
+donate=
