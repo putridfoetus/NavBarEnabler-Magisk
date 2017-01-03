@@ -1,3 +1,7 @@
+v2
+  - Update for Magisk v10.2
+  - Fix some script errors
+
 v1
-    - Initial upload to github
-    - APK-Patcher update-binary copied into magisk's module template update-binary and adapted accordingly
+  - Initial upload to github
+  - APK-Patcher update-binary copied into magisk's module template update-binary and adapted accordingly

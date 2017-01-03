@@ -171,7 +171,7 @@ MODPATH=$MOUNTPATH/$MODID
 
 mkdir -p $INSTALLER
 cd $INSTALLER
-unzip -o "$ZIP" common/* module.prop
+unzip -o "$ZIP" "common/*" module.prop
 
 ##########################################################################################
 # Main
@@ -255,8 +255,8 @@ if (! is_mounted $MOUNTPATH); then
 fi
 
 # Create mod paths
-rm -rf $MODPATH
-mkdir -p $MODPATH
+rm -rf $MODPATH 2>/dev/null
+mkdir -p $MODPATH$REPLACE
 
 ##############################################################################
 #
@@ -385,9 +385,11 @@ for target in $apklist; do
   cp -f $target $apkname-preopt.apk;
   $bin/zipalign -p 4 $apkname-preopt.apk $target;
 
+###
 ### Edited for Magisk compatibility
-  # copy patched file to $MODPATH
-  cp -fp $ap/$target $MODPATH/$sysfile;
+###
+  # copy patched file to $MODPATH$REPLACE
+  cp -fp $ap/$target $MODPATH$REPLACE;
   progress=$((progress + subamt));
   set_progress $(awk -v num=$progress 'BEGIN { print num / 100}');
 
@@ -420,10 +422,9 @@ ui_print "APK-Patcher Done!";
 #
 ##############################################################################
 
-##Not needed for this mod
 # Copy files
-# ui_print "- Copying files"
-# unzip -o "$ZIP" system/* -d $MODPATH
+ui_print "- Copying files"
+unzip -o "$ZIP" "system/*" -d $MODPATH
 
 # Handle replace folders
 for TARGET in $REPLACE; do
@@ -435,6 +436,11 @@ if ($AUTOMOUNT); then
   mktouch $MODPATH/auto_mount
 fi
 
+# prop files
+if ($PROPFILE); then
+  cp -af $INSTALLER/common/system.prop $MODPATH/system.prop
+fi
+
 # Module info
 cp -af $INSTALLER/module.prop $MODPATH/module.prop
 if ($BOOTMODE); then
@@ -443,17 +449,15 @@ if ($BOOTMODE); then
   cp -af $INSTALLER/module.prop /magisk/$MODID/module.prop
 fi
 
-##Not needed
 # post-fs-data mode scripts
-# if ($POSTFSDATA); then
-#   cp -af $INSTALLER/common/post-fs-data.sh $MODPATH/post-fs-data.sh
-# fi
+if ($POSTFSDATA); then
+  cp -af $INSTALLER/common/post-fs-data.sh $MODPATH/post-fs-data.sh
+fi
 
-##Not needed
 # service mode scripts
-# if ($LATESTARTSERVICE); then
-#   cp -af $INSTALLER/common/service.sh $MODPATH/service.sh
-# fi
+if ($LATESTARTSERVICE); then
+  cp -af $INSTALLER/common/service.sh $MODPATH/service.sh
+fi
 
 ui_print "- Setting permissions"
 set_permissions
@@ -462,13 +466,14 @@ ui_print "- Unmounting partitions"
 
 umount $MOUNTPATH
 losetup -d $LOOPDEVICE
-rm -rf $MOUNTPATH
+rmdir $MOUNTPATH
+
 # Shrink the image if possible
 target_size_check $IMG
-NEWDATASIZE=$(((curUsedM / 32 + 2) * 32));
+NEWDATASIZE=$(((curUsedM / 32 + 2) * 32))
 if [ "$curSizeM" -gt "$NEWDATASIZE" ]; then
-  ui_print "- Shrinking $IMG to ${NEWDATASIZE}M...";
-  resize2fs $IMG ${NEWDATASIZE}M;
+  ui_print "- Shrinking $IMG to ${NEWDATASIZE}M..."
+  resize2fs $IMG ${NEWDATASIZE}M
 fi
 
 if (! $BOOTMODE); then
